@@ -59,7 +59,7 @@ section:first-of-type{border-top:0}
 .eyebrow b{color:var(--signal);font-weight:500}
 
 /* ---------- 01 hero ---------- */
-#who{padding-top:clamp(120px,20vh,210px)}
+#who{padding-top:calc(62px + clamp(52px,8vh,92px));min-height:100svh;box-sizing:border-box;position:relative}
 .statement{
   font-weight:700;letter-spacing:-.045em;line-height:1.02;
   font-size:clamp(38px,7.4vw,94px);max-width:16ch;
@@ -67,10 +67,32 @@ section:first-of-type{border-top:0}
 .statement.wide{max-width:22ch}
 .cols{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:clamp(24px,4vw,64px);margin-top:clamp(48px,7vw,88px);
+  gap:clamp(24px,4vw,64px);margin-top:clamp(130px,27vh,320px);
   max-width:900px;
 }
 .cols p{color:var(--mute);font-size:15px;line-height:1.62}
+
+
+/* scroll cue — variant B */
+.scrollcue{
+  position:absolute;left:0;right:0;top:calc(100svh - 78px);
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  pointer-events:none;
+}
+.scrollcue b{
+  font-family:var(--mono);font-size:10px;font-weight:400;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--mute);
+}
+.scrollcue i{
+  display:block;width:1px;height:38px;
+  background:linear-gradient(to bottom,var(--rule),var(--signal));
+  transform-origin:top;animation:cue 2.4s ease-in-out infinite;
+}
+@keyframes cue{
+  0%,100%{opacity:.3;transform:scaleY(.55)}
+  50%    {opacity:1;transform:scaleY(1)}
+}
+@media(prefers-reduced-motion:reduce){.scrollcue i{animation:none;opacity:.8}}
 
 /* ---------- 02 background ---------- */
 .split{display:grid;grid-template-columns:1fr;gap:clamp(40px,6vw,72px)}
@@ -231,6 +253,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
     <p>Most operators pick a lane. I've run the brand side and the agency side at the same time, which means I've been the client and the vendor in the same week. I know what a founder is actually worried about at 11pm, because I've been that founder.</p>
     <p>I co-founded Not Just Sundays and took it from $800 to $30K a day with no outside capital. I run Thumbstop Collective, where roughly twenty people across eight pods do creator and paid social as one system. In between: two exits, and a movie a day.</p>
   </div>
+  <div class="scrollcue" aria-hidden="true"><b>Scroll</b><i></i></div>
 </div></section>
 
 <!-- 02 -->
