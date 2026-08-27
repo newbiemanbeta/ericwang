@@ -52,8 +52,9 @@ a{color:inherit;text-decoration:none}
 }
 .card .name,.card .role{transition:opacity .3s,transform .3s}
 @media(hover:hover){
-  a.card:hover .name{opacity:0;transform:translateY(-8px)}
-  a.card:hover .metric{opacity:1;transform:none}
+  /* only flip cards that actually have a metric to reveal */
+  a.card:has(.metric):hover .name{opacity:0;transform:translateY(-8px)}
+  a.card:has(.metric):hover .metric{opacity:1;transform:none}
   a.card.lead:hover .metric{color:#0B0C0E}
 }
 @media(hover:none){
