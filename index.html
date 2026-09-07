@@ -142,7 +142,7 @@ section:first-of-type{border-top:0}
 }
 .statement.wide{max-width:22ch}
 .cols{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));
   gap:clamp(24px,4vw,64px);margin-top:auto;padding-top:clamp(30px,4.5vh,58px);
   max-width:900px;
 }
@@ -226,7 +226,7 @@ section:first-of-type{border-top:0}
 .brandgrid{
   display:grid;gap:1px;background:var(--rule);
   border:1px solid var(--rule);
-  grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));
 }
   .card{
   background:var(--paper);padding:26px 22px 22px;min-height:132px;
@@ -358,6 +358,23 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
   .bar i{width:var(--w)!important}
 }
 
+/* ---------- stop the page growing wider than the screen ---------- */
+html,body{max-width:100%;overflow-x:hidden}
+/* flex/grid children default to min-width:auto and refuse to shrink below
+   their content - this is what was dragging the layout past the viewport */
+.wrap,section>*,.cols,.split,.subblocks,.brandgrid,.statrow,.comb{min-width:0}
+.cols p,.subblock p,.card,.stat{min-width:0;overflow-wrap:break-word}
+
+/* ---------- tablet and below ---------- */
+@media(max-width:900px){
+  /* two 280px columns need 580px+ - never on a phone */
+  .cols{grid-template-columns:1fr;gap:22px}
+  .subblocks{grid-template-columns:1fr;gap:30px}
+  .subblock{padding-right:0}
+  .subblock + .subblock{border-left:0;padding-left:0;padding-top:30px;border-top:1px solid var(--rule)}
+  .split h2{max-width:none}
+}
+
 /* ---------- phone ---------- */
 @media(max-width:640px){
   #who{padding-bottom:54px}
@@ -372,7 +389,12 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
   .statrow{gap:8px}
   .stat .label{font-size:10px;letter-spacing:.14em}
   #cta h2{max-width:none}
-  .card{min-height:112px;padding:22px 18px 18px}
+  .brandgrid{grid-template-columns:1fr 1fr}
+  .card{min-height:0;padding:16px 13px 14px}
+  .card .name{font-size:16px;letter-spacing:-.02em}
+  .card .role{font-size:8.5px;letter-spacing:.11em;line-height:1.55}
+  .card .reveal{margin-top:14px}
+  .card .metric{font-size:17px}
   footer .wrap{gap:14px}
 }
 /* no cursor means nothing to move - the light drifts and resolves on its own */
