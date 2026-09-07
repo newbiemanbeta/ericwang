@@ -357,6 +357,28 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
   *{transition:none!important}
   .bar i{width:var(--w)!important}
 }
+
+/* ---------- phone ---------- */
+@media(max-width:640px){
+  #who{padding-bottom:54px}
+  .eyebrow{margin-bottom:22px}
+  /* the ch cap is for wide screens; on a phone it just wastes width */
+  .statement{max-width:none;font-size:clamp(33px,8.8vw,46px);line-height:1.06}
+  .cols{padding-top:26px;gap:20px}
+  .cols p{font-size:14.5px;line-height:1.6}
+  .split h2{max-width:none;font-size:clamp(28px,8vw,40px)}
+  .subblock p,.footnote{font-size:14.5px}
+  .stat{padding:18px 0}
+  .statrow{gap:8px}
+  .stat .label{font-size:10px;letter-spacing:.14em}
+  #cta h2{max-width:none}
+  .card{min-height:112px;padding:22px 18px 18px}
+  footer .wrap{gap:14px}
+}
+/* no cursor means nothing to move - the light drifts and resolves on its own */
+@media(hover:none){
+  .hint{display:none}
+}
 </style>
 </head>
 <body>
