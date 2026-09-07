@@ -401,6 +401,33 @@ html,body{max-width:100%;overflow-x:hidden}
 @media(hover:none){
   .hint{display:none}
 }
+
+/* ---------- 03 the red follows the card you're on ---------- */
+@media(hover:hover){
+  /* lead card hands the highlight over while another card is hovered */
+  .brandgrid:has(.card:hover) .card.lead{background:var(--paper)}
+  .brandgrid:has(.card:hover) .card.lead .name{color:var(--ink)}
+  .brandgrid:has(.card:hover) .card.lead .role{color:var(--mute)}
+  .brandgrid:has(.card:hover) .card.lead .metric{color:var(--signal)}
+  .brandgrid:has(.card:hover) a.card.lead .name::after{color:var(--mute)}
+
+  /* whichever card you're on takes it */
+  .card:hover{background:var(--signal)}
+  .card:hover .name,.card:hover .metric{color:#fff}
+  .card:hover .role{color:rgba(255,255,255,.74)}
+  a.card:hover .name::after{color:rgba(255,255,255,.8)}
+  .card.more:hover .name{color:#fff}
+}
+/* touch: same behaviour on tap */
+@media(hover:none){
+  .brandgrid:has(.card:active) .card.lead{background:var(--paper)}
+  .brandgrid:has(.card:active) .card.lead .name{color:var(--ink)}
+  .brandgrid:has(.card:active) .card.lead .role{color:var(--mute)}
+  .brandgrid:has(.card:active) .card.lead .metric{color:var(--signal)}
+  .card:active{background:var(--signal)}
+  .card:active .name,.card:active .metric{color:#fff}
+  .card:active .role{color:rgba(255,255,255,.74)}
+}
 </style>
 </head>
 <body>
