@@ -10,12 +10,13 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root{
-  --ink:#0B0C0E;
-  --ink-2:#101215;
-  --paper:#EFEDE8;
-  --mute:#7C7A75;
-  --rule:#1F2024;
-  --signal:#C9A961;
+  --paper:#FBFAF8;            /* page */
+  --paper-2:#F1EFEA;          /* cards, cells */
+  --ink:#121316;              /* type */
+  --mute:#6E6C68;
+  --rule:#E3E0D9;
+  --signal:#E5514A;           /* TSC red */
+  --cyan:#12BFCE;             /* the other half of the split */
   --serif:"Instrument Serif",Georgia,serif;
   --sans:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -25,7 +26,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
-  background:var(--ink);color:var(--paper);
+  background:var(--paper);color:var(--ink);
   font-family:var(--sans);font-weight:400;
   -webkit-font-smoothing:antialiased;
   font-variant-numeric:tabular-nums;
@@ -52,28 +53,55 @@ a{color:inherit;text-decoration:none}
 }
 .card .name,.card .role{transition:opacity .3s,transform .3s}
 @media(hover:hover){
-  /* only flip cards that actually have a metric to reveal */
-  a.card:has(.metric):hover .name{opacity:0;transform:translateY(-8px)}
-  a.card:has(.metric):hover .metric{opacity:1;transform:none}
-  a.card.lead:hover .metric{color:#0B0C0E}
+  .card:hover .reveal{opacity:1;transform:none}
 }
 @media(hover:none){
-  .card .metric{position:static;opacity:1;transform:none;font-size:19px;margin-top:8px}
+  .card .reveal{opacity:1;transform:none}
 }
+.card.lead .metric{color:#fff}
 
 /* CTA lift */
 .btn{position:relative;overflow:hidden}
-.btn::after{content:"";position:absolute;inset:0;background:#fff;opacity:0;transition:opacity .25s}
-.btn:hover::after{opacity:.14}
+.btn::after{content:"";position:absolute;inset:0;background:#000;opacity:0;transition:opacity .25s}
+.btn:hover::after{opacity:.12}
 
 @media(prefers-reduced-motion:reduce){
   .rv{opacity:1!important;transform:none!important}
 }
 
+
+/* ---------- chromatic split (the glitch) ---------- */
+@keyframes rgbsplit{
+  0%   {text-shadow:-2px 0 var(--signal), 2px 0 var(--cyan); transform:translate(0)}
+  20%  {text-shadow: 2px 0 var(--signal),-2px 0 var(--cyan); transform:translate(-1px,1px)}
+  40%  {text-shadow:-3px 0 var(--signal), 3px 0 var(--cyan); transform:translate(1px,-1px)}
+  60%  {text-shadow: 1px 0 var(--signal),-1px 0 var(--cyan); transform:translate(-1px,0)}
+  80%  {text-shadow:-2px 0 var(--signal), 2px 0 var(--cyan); transform:translate(1px,1px)}
+  100% {text-shadow:none; transform:translate(0)}
+}
+@keyframes rgbhold{
+  0%,100%{text-shadow:-1.5px 0 var(--signal), 1.5px 0 var(--cyan)}
+  50%    {text-shadow:-2.5px 0 var(--signal), 2.5px 0 var(--cyan)}
+}
+@media(hover:hover){
+  .card:hover .name,
+  .cell:not(.hub):hover span,
+  .topbar a.mini:hover,
+  .social a:hover,
+  .mailto:hover{
+    animation:rgbsplit .42s steps(3) 1, rgbhold 1.6s ease-in-out .42s infinite;
+  }
+  .cell:not(.hub):hover span{text-shadow:none;animation:rgbsplit .42s steps(3) 1}
+  .eyebrow:hover b{animation:rgbsplit .4s steps(3) 1}
+}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important}
+}
+
 /* ---------- top bar ---------- */
 .topbar{
   position:fixed;top:0;left:0;right:0;z-index:50;
-  background:rgba(11,12,14,.82);backdrop-filter:blur(10px);
+  background:rgba(251,250,248,.82);backdrop-filter:blur(10px);
   border-bottom:1px solid var(--rule);
 }
 .topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:62px}
@@ -82,7 +110,7 @@ a{color:inherit;text-decoration:none}
   font-family:var(--mono);font-size:11px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--mute);transition:color .2s;
 }
-.topbar a.mini:hover{color:var(--paper)}
+.topbar a.mini:hover{color:var(--ink)}
 
 /* ---------- section frame ---------- */
 section{
@@ -144,17 +172,21 @@ section:first-of-type{border-top:0}
 
 /* ---------- hero spotlight ---------- */
 .stage{position:relative;--mx:50%;--my:42%;--r:clamp(240px,27vw,400px)}
-.statement.base{opacity:.13;transition:opacity .55s ease}
+.statement.base{opacity:.10;transition:opacity .55s ease}
 .statement.lit{
   position:absolute;inset:0;opacity:1;pointer-events:none;
+  text-shadow:-1px 0 rgba(229,81,74,.42), 1px 0 rgba(18,191,206,.42);
   -webkit-mask-image:radial-gradient(circle var(--r) at var(--mx) var(--my),#000 0%,rgba(0,0,0,.85) 42%,transparent 72%);
           mask-image:radial-gradient(circle var(--r) at var(--mx) var(--my),#000 0%,rgba(0,0,0,.85) 42%,transparent 72%);
   transition:opacity .55s ease;
 }
 .beam{
   position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;
-  background:radial-gradient(circle calc(var(--r)*.9) at var(--mx) var(--my),
-    rgba(201,169,97,.13) 0%,rgba(201,169,97,.05) 40%,transparent 70%);
+  background:
+    radial-gradient(circle calc(var(--r)*.85) at calc(var(--mx) - 8px) var(--my),
+      rgba(229,81,74,.10) 0%,transparent 68%),
+    radial-gradient(circle calc(var(--r)*.85) at calc(var(--mx) + 8px) var(--my),
+      rgba(18,191,206,.10) 0%,transparent 68%);
   transition:opacity .6s ease;
 }
 #who .cols p{opacity:.35;transition:opacity .55s ease}
@@ -171,15 +203,6 @@ section:first-of-type{border-top:0}
 }
 
 /* ---------- 02 background ---------- */
-figure.portrait{margin:0 0 clamp(26px,4vw,40px)}
-figure.portrait img{
-  width:clamp(120px,15vw,178px);aspect-ratio:1;border-radius:50%;
-  display:block;filter:contrast(1.02);
-}
-figure.portrait figcaption{
-  font-family:var(--mono);font-size:10px;letter-spacing:.17em;
-  text-transform:uppercase;color:var(--mute);margin-top:14px;
-}
 .split{display:grid;grid-template-columns:1fr;gap:clamp(40px,6vw,72px)}
 @media(min-width:900px){.split{grid-template-columns:0.9fr 1.1fr}}
 .split h2{
@@ -205,27 +228,28 @@ figure.portrait figcaption{
   border:1px solid var(--rule);
   grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
 }
-.card{
-  background:var(--ink);padding:26px 22px 22px;min-height:132px;
+  .card{
+  background:var(--paper);padding:26px 22px 22px;min-height:132px;
   display:flex;flex-direction:column;justify-content:space-between;
   transition:background .22s;
 }
-.card:hover{background:var(--ink-2)}
+.card:hover{background:var(--paper-2)}
 a.card .name::after{
   content:"↗";font-size:.62em;margin-left:.45em;color:var(--mute);
   vertical-align:super;transition:color .22s;
 }
 a.card:hover .name::after{color:var(--signal)}
-a.card.lead .name::after{color:rgba(11,12,14,.5)}
-a.card.lead:hover .name::after{color:#0B0C0E}
+a.card.lead .name::after{color:rgba(255,255,255,.55)}
+a.card.lead:hover .name::after{color:#fff}
 .card .name{font-family:var(--serif);font-weight:400;font-size:19px;letter-spacing:-.025em;line-height:1.2}
 .card .role{
-  font-family:var(--mono);font-size:10px;letter-spacing:.13em;
-  text-transform:uppercase;color:var(--mute);margin-top:22px;line-height:1.6;
+  display:block;font-family:var(--mono);font-size:10px;letter-spacing:.13em;
+  text-transform:uppercase;color:var(--mute);line-height:1.6;
 }
+.card .reveal{margin-top:22px}
 .card.lead{background:var(--signal)}
 .card.lead:hover{background:var(--signal)}
-.card.lead .name,.card.lead .role{color:#0B0C0E}
+.card.lead .name,.card.lead .role{color:#fff}
 .card.more .name{color:var(--mute)}
 .footnote{margin-top:26px;color:var(--mute);font-size:14px;line-height:1.6}
 
@@ -259,11 +283,11 @@ section.tall{min-height:auto;padding:clamp(64px,9vh,112px) 0}
   aspect-ratio:2.5/2.598;
   container-type:inline-size;        /* text sizes against the comb, not the window */
 }
-.cell{
+  .cell{
   position:absolute;width:40%;height:33.34%;
   transform:translate(-50%,-50%) scale(.984);
   clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%);
-  background:var(--ink-2);
+  background:var(--paper-2);
   display:grid;grid-template-columns:minmax(0,1fr);
   place-items:center;text-align:center;
   padding:0 7%;
@@ -277,89 +301,24 @@ section.tall{min-height:auto;padding:clamp(64px,9vh,112px) 0}
   font-size:clamp(9.7px,4.8cqi,16.8px);
   transition:color .26s ease;
 }
-.cell.hub{background:#1B1E23;padding:0 9%}
+.cell.hub{background:#E7E4DD;padding:0 9%}
 .cell.hub span{
   display:block;transform:translateX(-2.5%);   /* italic leans right; nudge back */
-  font-family:var(--serif);font-style:italic;color:var(--paper);line-height:1.05;
+  font-family:var(--serif);font-style:italic;color:var(--ink);line-height:1.05;
   font-size:23px;
   font-size:clamp(11.8px,6.6cqi,30px);
 }
 @media(hover:hover){
   .cell:not(.hub):hover{background:var(--signal);transform:translate(-50%,-50%) scale(1)}
-  .cell:not(.hub):hover span{color:#0B0C0E;font-weight:500}
-  .comb:hover .cell.hub{background:#191B20}
+  .cell:not(.hub):hover span{color:#fff;font-weight:500}
+  .comb:hover .cell.hub{background:#E2DED6}
 }
 .cell:not(.hub):active{background:var(--signal)}
-.cell:not(.hub):active span{color:#0B0C0E}
+.cell:not(.hub):active span{color:#fff}
 .comb .glow{
   position:absolute;left:50%;top:50%;width:74%;aspect-ratio:1;
   transform:translate(-50%,-50%);pointer-events:none;z-index:-1;
-  background:radial-gradient(circle,rgba(201,169,97,.13),transparent 68%);
-}
-
-/* ---------- 06 selected work ---------- */
-.workgrid{
-  display:grid;gap:clamp(20px,3vw,34px);max-width:760px;
-  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
-}
-.pcard{display:block}
-.pcard .frame{
-  position:relative;border:1px solid var(--rule);aspect-ratio:1;
-  display:grid;place-items:center;overflow:hidden;
-  transition:border-color .3s,background .3s;
-}
-@media(hover:hover){.pcard:hover .frame{border-color:var(--signal);background:var(--ink-2)}}
-.pcard .frame .logo{
-  width:56%;max-height:44%;object-fit:contain;opacity:.92;
-  transition:opacity .3s,transform .3s;
-}
-.pcard .tag{
-  position:absolute;left:16px;bottom:14px;
-  font-family:var(--mono);font-size:9.5px;letter-spacing:.15em;
-  text-transform:uppercase;color:var(--mute);transition:opacity .3s;
-}
-.pcard .pop{
-  position:absolute;inset:0;padding:22px;background:var(--ink-2);
-  display:flex;flex-direction:column;justify-content:center;gap:12px;
-  opacity:0;transition:opacity .32s;
-}
-.pcard .pop b{
-  font-family:var(--mono);font-size:9.5px;font-weight:500;letter-spacing:.15em;
-  text-transform:uppercase;color:var(--signal);display:block;margin-bottom:5px;
-}
-.pcard .pop p{font-size:13px;line-height:1.55;color:var(--paper)}
-@media(hover:hover){
-  .pcard:hover .pop{opacity:1}
-  .pcard:hover .logo{opacity:0;transform:scale(.94)}
-  .pcard:hover .tag{opacity:0}
-}
-@media(hover:none){
-  .pcard .frame{aspect-ratio:auto}
-  .pcard .pop{position:static;opacity:1;background:transparent;padding:20px 16px 16px}
-  .pcard .frame .logo{margin:26px auto 0}
-  .pcard .tag{position:static;margin:0 0 0 16px;display:block}
-}
-.pcard h3{
-  font-family:var(--serif);font-weight:400;font-size:clamp(23px,2.7vw,31px);
-  letter-spacing:-.01em;margin-top:16px;line-height:1.15;
-}
-.pcard h3 em{font-style:italic;color:var(--paper)}
-.pcard .sub{color:var(--mute);font-size:13.5px;margin-top:5px}
-.pcard .ext{color:var(--signal);font-size:.6em;vertical-align:super;margin-left:.3em}
-
-/* ---------- 07 quotes ---------- */
-.qlead{
-  font-family:var(--serif);font-weight:400;letter-spacing:-.01em;line-height:1.2;
-  font-size:clamp(23px,3.5vw,42px);max-width:20ch;
-}
-.qrest{
-  display:grid;gap:clamp(24px,4vw,52px);margin-top:clamp(40px,6vw,64px);
-  grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
-}
-.qrest p{color:var(--mute);font-size:15px;line-height:1.62}
-.attrib{
-  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--mute);margin-top:clamp(36px,5vw,56px);padding-top:20px;border-top:1px solid var(--rule);
+  background:radial-gradient(circle,rgba(229,81,74,.10),transparent 68%);
 }
 
 /* ---------- 08 cta ---------- */
@@ -374,13 +333,13 @@ section.tall{min-height:auto;padding:clamp(64px,9vh,112px) 0}
 }
 .btn{
   display:inline-flex;align-items:center;gap:11px;margin-top:40px;
-  background:var(--signal);color:#0B0C0E;font-weight:600;font-size:14px;
+  background:var(--signal);color:#fff;font-weight:600;font-size:14px;
   letter-spacing:.02em;padding:16px 30px;border-radius:100px;
   transition:transform .18s,filter .18s;
 }
 .btn:hover{filter:brightness(1.12);transform:translateY(-1px)}
 .mailto{display:block;margin-top:22px;color:var(--mute);font-size:14px;transition:color .2s}
-.mailto:hover{color:var(--paper)}
+.mailto:hover{color:var(--ink)}
 
 /* ---------- footer ---------- */
 footer{border-top:1px solid var(--rule);padding:34px 0 44px}
@@ -391,7 +350,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
   text-transform:uppercase;color:var(--mute);
 }
 .social a{transition:color .2s}
-.social a:hover{color:var(--paper)}
+.social a:hover{color:var(--ink)}
 
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -405,7 +364,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
 <div class="topbar">
   <div class="wrap">
     <span class="mark">Eric Wang</span>
-    <a class="mini" href="#cta">Book a call</a>
+    <a class="mini" href="/book">Book a call</a>
   </div>
 </div>
 
@@ -431,10 +390,6 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
   <span class="eyebrow"><b>02</b> &nbsp;/&nbsp; Background</span>
   <div class="rv split">
     <div>
-    <figure class="portrait rv">
-      <img src="img/eric.png" alt="Eric Wang, founder and growth operator." width="178" height="178">
-      <figcaption>Eric Wang &middot; Los Angeles</figcaption>
-    </figure>
     <h2>From <em>bootstrapped</em> to <em>$500K</em> a day.</h2>
     </div>
     <div class="subblocks">
@@ -454,15 +409,15 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
 <section id="brands"><div class="wrap">
   <span class="eyebrow"><b>03</b> &nbsp;/&nbsp; Brands I've built and backed</span>
   <div class="rv brandgrid">
-    <a class="card lead" href="https://notjustsundays.com" target="_blank" rel="noopener"><span class="name">Not Just Sundays</span><span class="metric">$800 → $30K/day</span><span class="role">Co-founder &amp; CEO</span></a>
-    <a class="card" href="https://thumbstopcollective.com" target="_blank" rel="noopener"><span class="name">Thumbstop Collective</span><span class="metric">$125M managed</span><span class="role">Founder</span></a>
-    <div class="card"><span class="name">Blankethoodies</span><span class="role">Growth partner · Paid social</span></div>
-    <a class="card" href="https://khloudfoods.com" target="_blank" rel="noopener"><span class="name">Khloud</span><span class="metric">Target · Walmart</span><span class="role">Creator &amp; TikTok Shop strategy</span></a>
-    <a class="card" href="https://jackhenry.co" target="_blank" rel="noopener"><span class="name">Jack Henry</span><span class="role">Strategic growth partner</span></a>
-    <div class="card"><span class="name">Based Bodyworks</span><span class="role">Fractional CMO</span></div>
-    <div class="card"><span class="name">Phoilex</span><span class="role">Growth advisor</span></div>
-    <div class="card"><span class="name">Crafted by Kaiyo</span><span class="role">Growth &amp; ops</span></div>
-    <div class="card more"><span class="name">+ More</span><span class="role">Jaxon Lane · Chili Chews · Food Nerd · Sunkissed · Another Void</span></div>
+    <a class="card lead" href="https://notjustsundays.com" target="_blank" rel="noopener"><span class="name">Not Just Sundays</span><span class="reveal"><span class="metric">$800 → $30K/day</span><span class="role">Co-founder &amp; CEO</span></span></a>
+    <a class="card" href="https://thumbstopcollective.com" target="_blank" rel="noopener"><span class="name">Thumbstop Collective</span><span class="reveal"><span class="metric">$125M managed</span><span class="role">Founder</span></span></a>
+    <div class="card"><span class="name">Blankethoodies</span><span class="reveal"><span class="role">Growth partner · Paid social</span></span></div>
+    <a class="card" href="https://khloudfoods.com" target="_blank" rel="noopener"><span class="name">Khloud</span><span class="reveal"><span class="metric">Target · Walmart</span><span class="role">Creator &amp; TikTok Shop strategy</span></span></a>
+    <a class="card" href="https://jackhenry.co" target="_blank" rel="noopener"><span class="name">Jack Henry</span><span class="reveal"><span class="role">Strategic growth partner</span></span></a>
+    <div class="card"><span class="name">Based Bodyworks</span><span class="reveal"><span class="role">Fractional CMO</span></span></div>
+    <div class="card"><span class="name">Phoilex</span><span class="reveal"><span class="role">Growth advisor</span></span></div>
+    <div class="card"><span class="name">Crafted by Kaiyo</span><span class="reveal"><span class="role">Growth &amp; ops</span></span></div>
+    <div class="card more"><span class="name">+ More</span><span class="reveal"><span class="role">Jaxon Lane · Chili Chews · Food Nerd · Sunkissed · Another Void</span></span></div>
   </div>
   <p class="rv footnote">Plus creator and platform work with David Dobrik, Pubity, and Based.</p>
 </div></section>
@@ -522,55 +477,11 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
 </section>
 
 <!-- 06 -->
-<section id="work"><div class="wrap">
-  <span class="eyebrow"><b>06</b> &nbsp;/&nbsp; Selected work</span>
-  <div class="workgrid rv">
-  <div class="pcard">
-    <div class="frame">
-      <img class="logo" src="logos/blanket-hoodies.png" alt="Blanket Hoodies">
-      <span class="tag">PAID SOCIAL</span>
-      <div class="pop">
-        <div><b>The problem</b><p>New entrant against Comfy and Oodie, first Q4 in business.</p></div>
-        <div><b>What happened</b><p>$2K to $80K a day in one quarter. Beat both incumbents on Black Friday. $250K in a single day.</p></div>
-      </div>
-    </div>
-    <h3>Blankethoodies</h3>
-    <p class="sub">Apparel / DTC</p>
-  </div>
-  <a class="pcard" href="https://notjustsundays.com" target="_blank" rel="noopener">
-    <div class="frame">
-      <img class="logo" src="logos/not-just-sundays.png" alt="Not Just Sundays">
-      <span class="tag">CO-FOUNDER</span>
-      <div class="pop">
-        <div><b>The problem</b><p>Launch a conversation card game with no capital and no audience.</p></div>
-        <div><b>What happened</b><p>$800 to $30K/day, bootstrapped. Built the founding team and the full operational spine.</p></div>
-      </div>
-    </div>
-    <h3><em>Not Just Sundays</em><span class="ext">&#8599;</span></h3>
-    <p class="sub">Faith / Card Game</p>
-  </a>
-  </div>
-</div></section>
-
-<!-- 07 -->
-<section id="quotes"><div class="wrap">
-  <span class="eyebrow"><b>07</b> &nbsp;/&nbsp; What it's like to work with me</span>
-  <p class="rv qlead">“Thumbstop Collective is an extension of our team — it doesn't feel like an agency.”</p>
-  <div class="rv qrest">
-    <p>“We've gotten referrals to many ‘top tier' agencies over the years that talked a big game but did not perform nearly as well.”</p>
-    <p>“Their firm is one of the biggest reasons Blankethoodies beat out the Oodie and the Comfy during Q4 of our first year in business.”</p>
-    <p>“Multiple competitors offered to evaluate their work in an attempt to win our business away, and every single one came away with nothing to recommend.”</p>
-  </div>
-  <div class="rv attrib">Oscar Wong — COO, Blankethoodies Co.</div>
-</div></section>
-
-<!-- 08 -->
 <section id="cta"><div class="wrap">
-  <span class="eyebrow" style="text-align:center"><b>08</b></span>
+  <span class="eyebrow" style="text-align:center"><b>06</b></span>
   <h2 class="rv">Let's build something worth <em>talking about</em>.</h2>
   <p class="sub">I take a small number of brands at a time. If you're scaling paid social, creator, or both — start here.</p>
-  <!-- Swap this href for the Calendly URL the moment one exists. -->
-  <a class="btn" href="mailto:ericwangbusiness@gmail.com?subject=Booking%20a%20call%20with%20Eric">Book a call →</a>
+  <a class="btn" href="/book">Book a call →</a>
   <a class="mailto" href="mailto:ericwangbusiness@gmail.com">ericwangbusiness@gmail.com</a>
 </div></section>
 

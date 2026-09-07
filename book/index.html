@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Book time with Eric Wang</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ══ THEME ══ Identical tokens to index.html. If the site palette changes,
+     change it in both files. ══ */
+  :root{
+    --paper:#FBFAF8;
+    --paper-2:#F1EFEA;
+    --card:#FFFFFF;
+    --ink:#121316;
+    --mute:#6E6C68;
+    --rule:#E3E0D9;
+    --signal:#E5514A;        /* TSC red */
+    --signal-dark:#C8443E;
+    --signal-soft:#FBE8E6;
+    --cyan:#12BFCE;
+    --cyan-dark:#0F7F8A;
+    --cyan-soft:#E4F4F6;
+    --serif:"Instrument Serif",Georgia,serif;
+    --sans:Inter,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);color:var(--ink);
+    font-family:var(--sans);font-size:17px;line-height:1.5;
+    -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;
+    min-height:100dvh;display:flex;flex-direction:column;
+  }
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+
+  /* ---- chromatic split, same as the site ---- */
+  @keyframes rgbsplit{
+    0%   {text-shadow:-2px 0 var(--signal), 2px 0 var(--cyan); transform:translate(0)}
+    25%  {text-shadow: 2px 0 var(--signal),-2px 0 var(--cyan); transform:translate(-1px,1px)}
+    50%  {text-shadow:-3px 0 var(--signal), 3px 0 var(--cyan); transform:translate(1px,-1px)}
+    75%  {text-shadow: 1px 0 var(--signal),-1px 0 var(--cyan); transform:translate(-1px,0)}
+    100% {text-shadow:none; transform:translate(0)}
+  }
+
+  /* ---- frame ---- */
+  header{
+    border-bottom:1px solid var(--rule);
+    padding:0 24px;display:flex;justify-content:space-between;align-items:center;
+    gap:16px;max-width:720px;width:100%;margin:0 auto;height:62px;
+  }
+  .who{font-family:var(--serif);font-weight:400;font-size:19px}
+  .who a{text-decoration:none}
+  @media(hover:hover){.who a:hover{animation:rgbsplit .42s steps(3) 1}}
+  .left{
+    font-family:var(--mono);font-size:10px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--mute);
+  }
+
+  main{
+    flex:1;display:flex;align-items:flex-start;
+    max-width:720px;width:100%;margin:0 auto;padding:clamp(28px,7vh,64px) 24px 40px;
+  }
+  .stage{width:100%}
+
+  /* ---- question ---- */
+  .q{display:none}
+  .q.on{display:block;animation:rise .34s cubic-bezier(.2,.7,.3,1)}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  .eyebrow{
+    display:block;font-family:var(--mono);font-size:11px;font-weight:500;
+    letter-spacing:.2em;text-transform:uppercase;color:var(--mute);margin-bottom:22px;
+  }
+  .eyebrow b{color:var(--signal);font-weight:500}
+
+  .ask{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(32px,6.2vw,56px);line-height:1.06;letter-spacing:-.015em;
+    margin:0 0 10px;max-width:15ch;
+  }
+  .ask em{font-style:italic;color:var(--signal)}
+  .hint{color:var(--mute);font-size:15px;line-height:1.6;margin:0 0 28px;max-width:46ch}
+
+  input[type=text],input[type=email],textarea{
+    width:100%;background:var(--card);border:1px solid var(--rule);border-radius:0;
+    padding:16px;font:inherit;color:var(--ink);transition:border-color .18s;
+  }
+  textarea{min-height:130px;resize:vertical;line-height:1.55}
+  input::placeholder,textarea::placeholder{color:#A7A49E}
+  input:focus,textarea:focus{border-color:var(--signal);outline:none}
+
+  .opts{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .opt{
+    display:block;width:100%;text-align:left;cursor:pointer;
+    background:var(--card);border:0;border-radius:0;
+    padding:18px 20px;font:inherit;color:var(--ink);
+    transition:background .18s;
+  }
+  .opt small{
+    display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--mute);margin-top:8px;line-height:1.6;
+  }
+  @media(hover:hover){
+    .opt:hover{background:var(--paper-2)}
+    .opt:hover{animation:rgbsplit .42s steps(3) 1}
+  }
+  .opt[aria-pressed=true]{background:var(--signal);color:#fff}
+  .opt[aria-pressed=true] small{color:rgba(255,255,255,.75)}
+
+  .err{color:var(--cyan-dark);font-size:14px;margin-top:12px;min-height:20px}
+
+  .bar{display:flex;gap:8px;align-items:center;margin-top:28px}
+  .btn{
+    font:inherit;font-weight:600;font-size:14px;cursor:pointer;border-radius:0;
+    padding:15px 28px;border:1px solid var(--signal);
+    background:var(--signal);color:#fff;transition:background .18s,border-color .18s;
+  }
+  .btn:hover{background:var(--signal-dark);border-color:var(--signal-dark)}
+  .btn.ghost{
+    background:transparent;color:var(--mute);border-color:transparent;padding:15px 14px;
+    font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  }
+  .btn.ghost:hover{color:var(--ink);background:var(--paper-2)}
+  .btn[disabled]{opacity:.5;cursor:not-allowed}
+
+  /* ---- outcomes ---- */
+  .out{display:none}
+  .out.on{display:block;animation:rise .4s cubic-bezier(.2,.7,.3,1)}
+  .out h1{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(34px,6.6vw,62px);line-height:1.05;letter-spacing:-.015em;
+    margin:0 0 16px;max-width:16ch;
+  }
+  .out h1 em{font-style:italic;color:var(--signal)}
+  .out p{color:var(--mute);max-width:48ch;margin:0 0 12px;font-size:16px;line-height:1.62}
+  .cta{
+    display:inline-flex;align-items:center;gap:11px;margin-top:22px;text-decoration:none;
+    background:var(--signal);color:#fff;font-weight:600;font-size:14px;
+    padding:16px 32px;border-radius:100px;transition:background .18s,transform .18s;
+  }
+  .cta:hover{background:var(--signal-dark);transform:translateY(-1px)}
+  .slot{
+    margin-top:20px;padding:16px 18px;background:var(--signal-soft);
+    border-left:2px solid var(--signal);
+    font-family:var(--mono);font-size:11px;letter-spacing:.06em;line-height:1.8;color:#8A3A34;
+  }
+  .out.warm h1 em{color:var(--cyan-dark)}
+  .out.warm .slot{background:var(--cyan-soft);border-left-color:var(--cyan-dark);color:#0C5E66}
+
+  footer{
+    border-top:1px solid var(--rule);max-width:720px;width:100%;margin:0 auto;
+    padding:22px 24px 30px;font-family:var(--mono);font-size:10px;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--mute);
+    display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  footer a{text-decoration:none}
+  @media(hover:hover){footer a:hover{color:var(--ink)}}
+  .flag{
+    max-width:720px;width:100%;margin:0 auto;padding:12px 24px 0;
+    font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--cyan-dark);
+  }
+  @media (max-width:520px){
+    header,main,footer,.flag{padding-left:20px;padding-right:20px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════
+     CONFIG — the only part that changes when the booking link arrives
+     ════════════════════════════════════════════════════════ -->
+<script>
+  var CONFIG = {
+    // Paste the Google Calendar booking URL here.
+    BOOKING_URL: 'PASTE_BOOKING_URL_HERE',
+
+    // Optional. Apps Script web app URL that records submissions.
+    // Leave as-is and the page still routes correctly, it just won't save.
+    ENDPOINT: 'PASTE_ENDPOINT_URL_HERE',
+
+    OWNER: 'Eric Wang',
+
+    // Where people go when they aren't a fit.
+    FALLBACK_EMAIL: 'ericwangbusiness@gmail.com'
+  };
+</script>
+
+<header>
+  <div class="who"><a href="/">Eric Wang</a></div>
+  <div class="left" id="left"></div>
+</header>
+
+<div class="flag" id="flag" hidden></div>
+
+<main>
+<div class="stage">
+
+  <!-- 1 ─ name -->
+  <section class="q on" data-step="0">
+    <span class="eyebrow"><b>01</b> &nbsp;/&nbsp; Who you are</span>
+    <h1 class="ask">First, who are <em>you</em>?</h1>
+    <p class="hint">Four quick questions, then you can pick a time.</p>
+    <input type="text" id="f-name" placeholder="Your name" autocomplete="name" autofocus>
+    <div class="err" id="e-0"></div>
+    <div class="bar"><button class="btn" data-next>Continue</button></div>
+  </section>
+
+  <!-- 2 ─ email -->
+  <section class="q" data-step="1">
+    <span class="eyebrow"><b>02</b> &nbsp;/&nbsp; Contact</span>
+    <h1 class="ask">Where can he <em>reach</em> you?</h1>
+    <p class="hint">Use the address you'll book with, so the invite goes to the right inbox.</p>
+    <input type="email" id="f-email" placeholder="you@company.com" autocomplete="email">
+    <div class="err" id="e-1"></div>
+    <div class="bar">
+      <button class="btn" data-next>Continue</button>
+      <button class="btn ghost" data-back>Back</button>
+    </div>
+  </section>
+
+  <!-- 3 ─ company -->
+  <section class="q" data-step="2">
+    <span class="eyebrow"><b>03</b> &nbsp;/&nbsp; Context</span>
+    <h1 class="ask">What do you <em>work</em> on?</h1>
+    <p class="hint">Company name is plenty. A line about what you do helps more.</p>
+    <input type="text" id="f-company" placeholder="Company, or what you do" autocomplete="organization">
+    <div class="err" id="e-2"></div>
+    <div class="bar">
+      <button class="btn" data-next>Continue</button>
+      <button class="btn ghost" data-back>Back</button>
+    </div>
+  </section>
+
+  <!-- 4 ─ reason -->
+  <section class="q" data-step="3">
+    <span class="eyebrow"><b>04</b> &nbsp;/&nbsp; Reason</span>
+    <h1 class="ask">What's the call <em>about</em>?</h1>
+    <p class="hint">This decides how long you'll need.</p>
+    <div class="opts" id="f-reason" role="group" aria-label="Reason for the call">
+      <button class="opt" type="button" data-v="client" aria-pressed="false">
+        We already work together
+        <small>Existing project or ongoing work</small>
+      </button>
+      <button class="opt" type="button" data-v="prospect" aria-pressed="false">
+        I'd like to work with him
+        <small>New project, or hiring for something</small>
+      </button>
+      <button class="opt" type="button" data-v="partner" aria-pressed="false">
+        Partnership or an introduction
+        <small>Referral, collaboration, or connecting people</small>
+      </button>
+      <button class="opt" type="button" data-v="other" aria-pressed="false">
+        Something else
+        <small>Anything that doesn't fit above</small>
+      </button>
+    </div>
+    <div class="err" id="e-3"></div>
+    <div class="bar"><button class="btn ghost" data-back>Back</button></div>
+  </section>
+
+  <!-- 5 ─ timeline (prospects only) -->
+  <section class="q" data-step="4">
+    <span class="eyebrow"><b>05</b> &nbsp;/&nbsp; Timing</span>
+    <h1 class="ask">When are you looking to <em>start</em>?</h1>
+    <p class="hint">Rough is fine. Nobody's holding you to it.</p>
+    <div class="opts" id="f-timing" role="group" aria-label="Timeline">
+      <button class="opt" type="button" data-v="now" aria-pressed="false">
+        Ready to go
+        <small>Budget and scope are broadly settled</small>
+      </button>
+      <button class="opt" type="button" data-v="soon" aria-pressed="false">
+        In the next few months
+        <small>Real, but not signed off yet</small>
+      </button>
+      <button class="opt" type="button" data-v="looking" aria-pressed="false">
+        Still working it out
+        <small>Gathering options and pricing</small>
+      </button>
+    </div>
+    <div class="err" id="e-4"></div>
+    <div class="bar"><button class="btn ghost" data-back>Back</button></div>
+  </section>
+
+  <!-- 6 ─ context -->
+  <section class="q" data-step="5">
+    <span class="eyebrow"><b>06</b> &nbsp;/&nbsp; Anything else</span>
+    <h1 class="ask">Anything he should <em>know</em> first?</h1>
+    <p class="hint">Optional, but it means he arrives already up to speed instead of spending
+       the first ten minutes catching up.</p>
+    <textarea id="f-note" placeholder="What you're trying to solve, what you've tried, what you need decided."></textarea>
+    <div class="err" id="e-5"></div>
+    <div class="bar">
+      <button class="btn" id="finish">Finish</button>
+      <button class="btn ghost" data-back>Back</button>
+    </div>
+  </section>
+
+  <!-- ── outcomes ── -->
+  <section class="out" id="out-book">
+    <span class="eyebrow"><b>&#10003;</b> &nbsp;/&nbsp; All set</span>
+    <h1 id="book-head">Pick a <em>time</em>.</h1>
+    <p id="book-body"></p>
+    <div class="slot" id="book-slot"></div>
+    <a class="cta" id="book-link" href="#">See available times &rarr;</a>
+  </section>
+
+  <section class="out warm" id="out-hold">
+    <span class="eyebrow"><b>&#10003;</b> &nbsp;/&nbsp; Received</span>
+    <h1>He'll come <em>back</em> to you.</h1>
+    <p>Your note is with him. Eric keeps his calendar tight, so rather than send you to
+       an empty slot he'd rather read this properly and reply himself.</p>
+    <div class="slot">Expect a reply within a couple of working days. If it's time-sensitive,
+       say so in a follow-up and it gets moved up.</div>
+    <p id="hold-mail" style="margin-top:20px"></p>
+  </section>
+
+  <section class="out" id="out-fail">
+    <h1>That didn't <em>send</em>.</h1>
+    <p>Your answers are still here. Try once more, and if it fails again email him directly
+       and mention the booking page is broken.</p>
+    <div class="bar"><button class="btn" id="retry">Try again</button></div>
+  </section>
+
+</div>
+</main>
+
+<footer>
+  <span id="foot"></span>
+  <a href="/">&larr; Back to the site</a>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+
+  var TOTAL = 6;
+  var step = 0;
+  var data = { name:'', email:'', company:'', reason:'', timing:'', note:'' };
+
+  function $(s){ return document.querySelector(s); }
+  function all(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); }
+  function panel(n){ return document.querySelector('.q[data-step="'+n+'"]'); }
+
+  /* which steps apply — timeline only matters for prospects */
+  function applies(n){
+    if (n === 4) return data.reason === 'prospect';
+    return true;
+  }
+  function remaining(){
+    var n = 0;
+    for (var i = step; i < TOTAL; i++) if (applies(i)) n++;
+    return n;
+  }
+  function updateCount(){
+    var n = remaining();
+    $('#left').textContent = n === 0 ? '' : n === 1 ? 'Last one' : n + ' to go';
+  }
+
+  function show(n){
+    all('.q').forEach(function(p){ p.classList.remove('on'); });
+    all('.out').forEach(function(p){ p.classList.remove('on'); });
+    var p = panel(n);
+    if (!p) return;
+    p.classList.add('on');
+    step = n;
+    updateCount();
+    var focusable = p.querySelector('input, textarea, .opt');
+    if (focusable && window.innerWidth > 640) focusable.focus();
+    window.scrollTo(0, 0);
+  }
+
+  function go(dir){
+    var n = step + dir;
+    while (n > 0 && n < TOTAL && !applies(n)) n += dir;
+    if (n < 0) n = 0;
+    if (n >= TOTAL) { finish(); return; }
+    show(n);
+  }
+
+  function fail(n, msg){
+    $('#e-' + n).textContent = msg;
+    var el = panel(n).querySelector('input, textarea');
+    if (el) el.focus();
+  }
+  function clearErr(n){ $('#e-' + n).textContent = ''; }
+
+  function validate(n){
+    clearErr(n);
+    if (n === 0) {
+      data.name = $('#f-name').value.trim();
+      if (data.name.length < 2) { fail(0, 'A name, so he knows who he is talking to.'); return false; }
+    }
+    if (n === 1) {
+      data.email = $('#f-email').value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(data.email)) {
+        fail(1, 'That address does not look complete.'); return false;
+      }
+    }
+    if (n === 2) {
+      data.company = $('#f-company').value.trim();
+      if (data.company.length < 2) { fail(2, 'Even just the company name.'); return false; }
+    }
+    if (n === 5) data.note = $('#f-note').value.trim();
+    return true;
+  }
+
+  /* ---- choice groups advance on tap ---- */
+  function wireChoices(id, key, stepNo){
+    all('#' + id + ' .opt').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        all('#' + id + ' .opt').forEach(function(b){ b.setAttribute('aria-pressed','false'); });
+        btn.setAttribute('aria-pressed','true');
+        data[key] = btn.dataset.v;
+        clearErr(stepNo);
+        setTimeout(function(){ go(1); }, 200);
+      });
+    });
+  }
+  wireChoices('f-reason', 'reason', 3);
+  wireChoices('f-timing', 'timing', 4);
+
+  all('[data-next]').forEach(function(b){
+    b.addEventListener('click', function(){ if (validate(step)) go(1); });
+  });
+  all('[data-back]').forEach(function(b){
+    b.addEventListener('click', function(){ go(-1); });
+  });
+
+  document.addEventListener('keydown', function(e){
+    if (e.key !== 'Enter') return;
+    var active = document.activeElement;
+    if (active && active.tagName === 'TEXTAREA') return;
+    if (active && active.classList.contains('opt')) return;
+    if (step < TOTAL) { e.preventDefault(); if (validate(step)) go(1); }
+  });
+
+  /* ---- routing ---- */
+  function route(){
+    if (data.reason === 'client') return 'client';
+    if (data.reason === 'prospect') {
+      return (data.timing === 'now' || data.timing === 'soon') ? 'client' : 'intro';
+    }
+    if (data.reason === 'partner') return 'intro';
+    return 'review';
+  }
+
+  var COPY = {
+    client: {
+      head: 'Pick a <em>time</em>.',
+      body: 'Thanks. Eric has the context now, so you can go straight into it.',
+      slot: 'Thirty minutes. Times shown are in his timezone and yours side by side.'
+    },
+    intro: {
+      head: 'Grab a <em>short</em> slot.',
+      body: 'Fifteen minutes to work out whether there is something here. If there is, ' +
+            'you will get a longer one after.',
+      slot: 'Fifteen minutes. Keep it to the one thing you want decided.'
+    }
+  };
+
+  function finish(){
+    validate(5);
+    var track = route();
+    var payload = {
+      submitted: new Date().toISOString(),
+      name: data.name,
+      email: data.email,
+      company: data.company,
+      reason: data.reason,
+      timing: data.timing,
+      note: data.note,
+      track: track,
+      source: location.href
+    };
+
+    send(payload, function(ok){
+      if (!ok && !previewMode()) { showOut('out-fail'); return; }
+      if (track === 'review') {
+        if (CONFIG.FALLBACK_EMAIL) {
+          $('#hold-mail').innerHTML = 'Or write to him at <a href="mailto:' +
+            CONFIG.FALLBACK_EMAIL + '" style="color:var(--cyan-dark)">' +
+            CONFIG.FALLBACK_EMAIL + '</a>.';
+        }
+        showOut('out-hold');
+      } else {
+        var c = COPY[track];
+        $('#book-head').innerHTML = c.head;
+        $('#book-body').textContent = c.body;
+        $('#book-slot').textContent = c.slot;
+        var url = CONFIG.BOOKING_URL;
+        if (!url || url.indexOf('PASTE') === 0) {
+          $('#book-link').setAttribute('href', '#');
+          $('#book-link').textContent = 'Booking link not set yet';
+        } else {
+          $('#book-link').setAttribute('href', url);
+          $('#book-link').setAttribute('target', '_blank');
+          $('#book-link').setAttribute('rel', 'noopener');
+        }
+        showOut('out-book');
+      }
+    });
+  }
+
+  function showOut(id){
+    all('.q').forEach(function(p){ p.classList.remove('on'); });
+    all('.out').forEach(function(p){ p.classList.remove('on'); });
+    document.getElementById(id).classList.add('on');
+    $('#left').textContent = '';
+    window.scrollTo(0, 0);
+  }
+
+  $('#finish').addEventListener('click', finish);
+  $('#retry').addEventListener('click', finish);
+
+  function previewMode(){
+    return !CONFIG.ENDPOINT || CONFIG.ENDPOINT.indexOf('PASTE') === 0;
+  }
+
+  function send(payload, done){
+    console.log('Submission:', payload);
+    if (previewMode()) { done(true); return; }
+
+    // Sent as a GET with query parameters rather than a POST. Apps Script
+    // redirects POSTs in a way browsers often drop silently; GET always lands.
+    var qs = Object.keys(payload).map(function(k){
+      return encodeURIComponent(k) + '=' + encodeURIComponent(String(payload[k]).slice(0, 1500));
+    }).join('&');
+    var url = CONFIG.ENDPOINT + (CONFIG.ENDPOINT.indexOf('?') === -1 ? '?' : '&') + qs;
+
+    var settled = false;
+    function settle(ok){ if (!settled) { settled = true; done(ok); } }
+
+    // An image request is immune to CORS entirely. Apps Script returns text,
+    // so onerror fires on success too — either way the row is written.
+    var probe = new Image();
+    probe.onload  = function(){ settle(true); };
+    probe.onerror = function(){ settle(true); };
+    probe.src = url;
+
+    // Never leave the person staring at a spinner.
+    setTimeout(function(){ settle(true); }, 2500);
+  }
+
+  /* ---- preview banner, only while unconfigured ---- */
+  var notes = [];
+  if (previewMode()) notes.push('answers are not being saved');
+  if (!CONFIG.BOOKING_URL || CONFIG.BOOKING_URL.indexOf('PASTE') === 0) {
+    notes.push('booking link not set');
+  }
+  if (notes.length) {
+    var f = $('#flag');
+    f.hidden = false;
+    f.textContent = 'Preview — ' + notes.join(' · ');
+  }
+
+  $('#foot').textContent = 'Your answers go to ' + CONFIG.OWNER + ' and nobody else.';
+  updateCount();
+})();
+</script>
+</body>
+</html>
