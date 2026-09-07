@@ -58,7 +58,6 @@ a{color:inherit;text-decoration:none}
 @media(hover:none){
   .card .reveal{opacity:1;transform:none}
 }
-.card.lead .metric{color:#fff}
 
 /* CTA lift */
 .btn{position:relative;overflow:hidden}
@@ -239,17 +238,12 @@ a.card .name::after{
   vertical-align:super;transition:color .22s;
 }
 a.card:hover .name::after{color:var(--signal)}
-a.card.lead .name::after{color:rgba(255,255,255,.55)}
-a.card.lead:hover .name::after{color:#fff}
 .card .name{font-family:var(--serif);font-weight:400;font-size:19px;letter-spacing:-.025em;line-height:1.2}
 .card .role{
   display:block;font-family:var(--mono);font-size:10px;letter-spacing:.13em;
   text-transform:uppercase;color:var(--mute);line-height:1.6;
 }
 .card .reveal{margin-top:22px}
-.card.lead{background:var(--signal)}
-.card.lead:hover{background:var(--signal)}
-.card.lead .name,.card.lead .role{color:#fff}
 .card.more .name{color:var(--mute)}
 .footnote{margin-top:26px;color:var(--mute);font-size:14px;line-height:1.6}
 
@@ -404,14 +398,7 @@ html,body{max-width:100%;overflow-x:hidden}
 
 /* ---------- 03 the red follows the card you're on ---------- */
 @media(hover:hover){
-  /* lead card hands the highlight over while another card is hovered */
-  .brandgrid:has(.card:hover) .card.lead{background:var(--paper)}
-  .brandgrid:has(.card:hover) .card.lead .name{color:var(--ink)}
-  .brandgrid:has(.card:hover) .card.lead .role{color:var(--mute)}
-  .brandgrid:has(.card:hover) .card.lead .metric{color:var(--signal)}
-  .brandgrid:has(.card:hover) a.card.lead .name::after{color:var(--mute)}
-
-  /* whichever card you're on takes it */
+  /* every card behaves the same: red only while hovered */
   .card:hover{background:var(--signal)}
   .card:hover .name,.card:hover .metric{color:#fff}
   .card:hover .role{color:rgba(255,255,255,.74)}
@@ -420,10 +407,6 @@ html,body{max-width:100%;overflow-x:hidden}
 }
 /* touch: same behaviour on tap */
 @media(hover:none){
-  .brandgrid:has(.card:active) .card.lead{background:var(--paper)}
-  .brandgrid:has(.card:active) .card.lead .name{color:var(--ink)}
-  .brandgrid:has(.card:active) .card.lead .role{color:var(--mute)}
-  .brandgrid:has(.card:active) .card.lead .metric{color:var(--signal)}
   .card:active{background:var(--signal)}
   .card:active .name,.card:active .metric{color:#fff}
   .card:active .role{color:rgba(255,255,255,.74)}
@@ -480,7 +463,7 @@ html,body{max-width:100%;overflow-x:hidden}
 <section id="brands"><div class="wrap">
   <span class="eyebrow"><b>03</b> &nbsp;/&nbsp; Brands I've built and backed</span>
   <div class="rv brandgrid">
-    <a class="card lead" href="https://notjustsundays.com" target="_blank" rel="noopener"><span class="name">Not Just Sundays</span><span class="reveal"><span class="metric">$800 → $30K/day</span><span class="role">Co-founder &amp; CEO</span></span></a>
+    <a class="card" href="https://notjustsundays.com" target="_blank" rel="noopener"><span class="name">Not Just Sundays</span><span class="reveal"><span class="metric">$800 → $30K/day</span><span class="role">Co-founder &amp; CEO</span></span></a>
     <a class="card" href="https://thumbstopcollective.com" target="_blank" rel="noopener"><span class="name">Thumbstop Collective</span><span class="reveal"><span class="metric">$125M managed</span><span class="role">Founder</span></span></a>
     <div class="card"><span class="name">Blankethoodies</span><span class="reveal"><span class="role">Growth partner · Paid social</span></span></div>
     <a class="card" href="https://khloudfoods.com" target="_blank" rel="noopener"><span class="name">Khloud</span><span class="reveal"><span class="metric">Target · Walmart</span><span class="role">Creator &amp; TikTok Shop strategy</span></span></a>
